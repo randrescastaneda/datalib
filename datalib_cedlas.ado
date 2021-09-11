@@ -66,7 +66,7 @@ return local modules "`modules'"
 
 tempfile base aux _sedlacfile
 tempname hh
-cap file open `hh' using "`root'/_log\log_`source'.csv", write text append
+cap file open `hh' using "${rootdatalib}/_log\log_`source'.csv", write text append
 if ("`ignoreerror'" == "" & _rc != 0) error _rc
 
 
@@ -156,6 +156,7 @@ if ( "`vintage'" == "" &  "`country'" == "" ) {
 if ( "`project'" == "" ) {
 	local prodef = 1      // no survey selected, so datalib will get the default
 	if ("`source'" == "sedlac") local project "03"    // default sedlac
+	else if ("`source'" == "sedlac" & "`country'" == "chl") local project "02"    // default sedlac chile
 	else                        local project "01"    // default lablac
 }
 else local prodef = 0
@@ -353,6 +354,11 @@ qui foreach year of local years {
 			* Conditions for countries
 			if ("`country'" == "arg" & `year' == 2003) local survey "ephc"
 			if ("`country'" == "bra" & `year' >= 2012 & "`source'" == "lablac") local survey "pme"
+			if ("`country'" == "bra" & `year' >= 2012 & "`source'" == "sedlac") {
+			local survey "pnadc"
+			local period "e1"
+			}
+			if ("`country'" == "bol" & `year' == 2016) local survey "eh"
 			if ("`country'" == "col" & inlist(`year', 2000, 2003) ) local survey "ech"
 			if ("`country'" == "ecu" & `year' == 2006) local survey "enemdu"
 			if ("`country'" == "ecu" & inlist(`year',1995, 1998)) local survey "eped"
@@ -412,10 +418,10 @@ qui foreach year of local years {
 		local  country_f = regexs(1)
 		if regexm(`"`folder'"', `"(^`country_f'_)([0-9]+)_*"')                /// 
 		local  years_f   = regexs(2)
-		if regexm(`"`folder'"', `"(^.*)_([a-z]+)\-?[a-z0-9]*_v0[1-9]_m(.*)"') /// 
+		if regexm(`"`folder'"', `"(^`country_f'_`years_f')_([a-z]+)\-?[a-z0-9]*_v0[1-9]_m(.*)"') /// 
 		local  survey_f  = regexs(2)
-		if regexm(`"`folder'"', `"[_\-]?([a-z][0-9])_(.*)"') 	                /// 
-		local  period_f  = regexs(1)
+		if regexm(`"`folder'"', `"(^`country_f'_`years_f'_`survey_f')([-][a-z]*[0-9]*)_(.*)"') 	                /// 
+		local  period_f  = regexs(2)
 		if regexm(`"`folder'"', `"(^.*)_v(0[1-9])_m(.*)"')	                  /// 
 		local  vermast_f = regexs(2)
 		if regexm(`"`folder'"', `"(^.*)m_v(0[1-9])_a(.*)"')	                  /// 
@@ -425,9 +431,12 @@ qui foreach year of local years {
 		if regexm(`"`folder'"', `"(^.*)[_\-]([0-9]+$)"')	                    /// 
 		local  project_f = regexs(2)
 		
+		*noi di "periodo: `period_f'"
+		
 		noi post `a' ("`folder'") ("`country_f'") ("`years_f'")       ///
 		("`period_f'") ("`survey_f'") ("`vermast_f'") ("`veralt_f'")  ///
 		("`type_f'") ("`project_f'")
+		
 	}
 	
 	postclose `a'
@@ -444,9 +453,10 @@ qui foreach year of local years {
 	
 	if (`altdef'  == 0)                        keep if veralt  == "`veralt'"
 	if (`mastdef' == 0)                        keep if vermast == "`vermast'"
-	if (`perdef'  == 0 & "`type'" == "sedlac") keep if period  == "`period'"
+	if (`perdef'  == 0 & "`type'" == "sedlac") keep if period  == "-`period'"
+	if (`perdef'  == 0 & "`type'" == "lablac") keep if period  == "-`period'"
 	if !inlist("`type'", "base", "blab")       keep if project == "`project'"
-	
+
 	* Sort considering Project, Period, Alternative and Master version	
 	sort project period veralt vermast
 	qui count
@@ -465,17 +475,17 @@ qui foreach year of local years {
 	local vermast = vermast[`r(N)']
 	local veralt  = veralt[`r(N)']
 	* local project = project[`r(N)']
-	
+
 	* Return information
 	return local years `years' 		            
 	return local project `project' 	          
 	return local vermast `vermast'	          
 	return local veralt `veralt' 	            
-	return local surveys "`survey'_`period'"  
+	return local surveys "`survey'`period'"  
 	return local survname "`survey'"          
 	return local period "`period'"            
-	if ("`source'"=="lablac") return local periods "`periods'" 
-	
+	if ("`source'"=="lablac") return local periods "`period'" 
+	*noi di "`period'" 
 	* Macros
 	if !inlist("`type'", "base", "blab") local folder "`dir'/`file'/Data/Harmonized"
 	else                     local folder "`dir'/`file'/Data/Base"
@@ -485,9 +495,8 @@ qui foreach year of local years {
 	* Specific options to each collection
 	*******************
 	
-	if ("`type'" == "sedlac" | "`source'" == "lablac") {
-		if ("`type'" == "sedlac")   local x  module
-		if ("`source'" == "lablac") local x  period
+	if ("`type'" == "sedlac") {
+		local x  module
 		
 		foreach y of local `x's {	
 			
@@ -502,8 +511,10 @@ qui foreach year of local years {
 		
 		if ("`nomodule'" == "1") error				
 	}
-	if ("`type'" == "base") cap local data: dir "`folder'" files "*base.dta" 	
-	
+	if ("`type'" == "base") cap local data: dir "`folder'" files "*base.dta" 
+	if ("`type'" == "lablac") cap local data: dir "`folder'" files "*lablac-`project'_all.dta" 		
+	if ("`type'" == "blac") cap local data: dir "`folder'" files "*_M.dta" 		
+	*noi di "`folder'"
 	local derror = _rc
 	local data = strtrim(`"`data'"')
 	local data: subinstr local data " " ", ", all 
@@ -624,7 +635,12 @@ qui foreach year of local years {
 						else if  ("`ms'" == "11") local msyntax "1:1 id"
 						else                      local msyntax "1:m id"
 						
+						if inlist("`module'", "gmd") {
+						merge `msyntax' using "`folder'/`data03'", nogen force
+						}
+						else {
 						merge `msyntax' using "`folder'/`data03'", nogen 
+						}
 					} // condition for merging datasets
 				} // end of modules loop
 			} // end of project 03 condition
@@ -672,7 +688,7 @@ qui foreach year of local years {
 				
 				* create standarized variables for ano, pais, encuesta and tipo
 				if ("`period'" != "") {
-					if ("`type'" == "sedlac") local _period = "-`period'"
+					if ("`type'" == "sedlac") local _period = "`period'"
 					else                      local _period = "_`period'"
 				}
 				else local _period = ""
@@ -702,17 +718,22 @@ qui foreach year of local years {
 			}
 			
 			* condition for individual databases and ppp factor requested
-			if ( "`ppp'" != "noppp" & !inlist("`type'", "base", "blab") ) {
+			if ( "`ppp'" != "noppp" & !inlist("`type'", "base", "blab")  ) {
 				* merge cpi's
 				cap destring ano `trimestre', replace force
 				* create locals for loops
-				if ( "`incppp'" == "" & lower("`country'") != "lac") ///
+				if ( "`incppp'" == "" & lower("`country'") != "lac") & (!inlist("`y'", "gmd", "asp") & "`type'"=="sedlac") ///
 				local incppp "ipcf ila inla"
 				
-				if ( "`incppp'" == "" & lower("`country'") == "lac") ///
+				if ( "`incppp'" == "" & lower("`country'") == "lac" & "`type'"=="sedlac") ///
 				local incppp "ipcf ilapcf inlapcf"
 				
-				if ( "`incppp'" == "all" ) local incppp "ipcf ii ijubi itran ila ilapc ilaho itf icap  ila_m ila_n inla  renta_imp"
+				if ( lower("`country'") == "bra" & `year'>2015 & "`type'"=="sedlac") { 
+				local trimestre ""
+				replace encuesta="PNADC"
+				}
+				
+				if ( "`incppp'" == "all" & "`type'"=="sedlac") local incppp "ipcf ii ijubi itran ila ilapc ilaho itf icap  ila_m ila_n inla  renta_imp"
 				if ("`vars'" != "") local incppp: list vars & incppp
 				
 				local cpis "ipc_`source' ipc11_`source' ppp11 ipc05_`source' ppp05"
@@ -725,8 +746,9 @@ qui foreach year of local years {
 				sort pais ano encuesta `trimestre'
 				replace pais = lower(pais)
 				
-				merge m:1 pais ano encuesta `trimestre' using "`root'/ipc_`source'_wb", ///
-				keepusing(`cpis' conversion `cpippp') update replace
+				
+				merge m:1 pais ano encuesta `trimestre' using "`root'/ipc_`source'_wb", 				keepusing(`cpis' conversion `cpippp') update replace
+				
 				drop if !inlist(_merge, 3, 4, 5)				
 				drop _merge
 				
@@ -736,7 +758,7 @@ qui foreach year of local years {
 					noi disp in red "there was an error merging CPI data and SEDLAC data"
 					exit
 				}
-				
+								
 				if ("`type'" == "lablac") drop *_ppp05 wage_m ilaho_m iasal_m ictap_m ipatr_m /// 
 					inla_m ijubi_m icap_m itran_m itrane_m ii_m inlaf_m itf_m ///
 					ilpc_m inlpc_m ilea_m ipcf_m ip_m ila_m qilea pilea iea ieb iec ied iee ///
@@ -772,7 +794,7 @@ qui foreach year of local years {
 			}
 			* Add Languages to var and value labels
 			if ("`country'" != "lac" & "`type'" == "sedlac" ) ///
-			datalib_sedlac_lang `language', project("`project'")
+			cap datalib_sedlac_lang `language', project("`project'")
 		} // End of clean condition
 	} // End of qui brakes
 	

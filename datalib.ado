@@ -71,7 +71,7 @@ datalib_usercheck
 local user = "`r(user)'"
 if ("${rootdatalib}" != "S:\Datalib") {
 	if ("${datalibstopbox}" != "check") {
-		cap window stopbox rusure "Dear `user'," ///
+		cap window stopbox rusure "Dear `user'," /// 
 		"This is a kind reminder that you are not allowed to save Datalib data on your computer or any other drive. We keep track of Datatalib users." ///
 		"Remember: the command -datalib- must be used instead of command -use- in order to load Datalib databases" ///
 		"Click on Yes if you agree with these conditions."
@@ -83,9 +83,18 @@ if ("${rootdatalib}" != "S:\Datalib") {
 	}
 }
 
-/* Check datalib version
+* Check datalib version
 * di date("$S_DATE", "DMY")
-datalib_checkversion 21265, user("`user'")
+*datalib_checkversion 21265, user("`user'")
+*21603 Feb22-2019 time 2// datalibpub access fixed
+*21642 APR02-2019 time 1// datalibpub access fixed
+*21650 APR11-2019 time 1// lacbins fixed
+*21697 May28-2019 time 1// lablac cpi fixed
+*21847 Oct25-2019 time1 // force when mergin modules. gmd may differ in format to sedlac. other modules are correct
+*21951 Feb-2020 -> datalibweb infor
+*21955 Feb-2020 -> datalibweb infor
+*22013 March-2020 -> datalibweb infor/ Javier
+datalib_checkversion 22013, user("`user'")
 if (`r(checkversion)' == 1 ) {
 clear programs
 clear ado
@@ -178,6 +187,7 @@ if ("`country'" == "" & "`repository'"=="" & ("`info'" == "" | ("`info'" == "inf
 	_n "Panama "             _col(22) "-- pan"  	///
 	_n "Paraguay "           _col(22) "-- pry"  	///
 	_n "Peru "               _col(22) "-- per"  	///
+	_n "St. Lucia "          _col(22) "-- lca"  	///
 	_n "Uruguay "            _col(22) "-- ury"  	///
 	_n "LAC "                _col(22) "-- lac"  	///
 	_n "" 							 				///
@@ -285,6 +295,7 @@ if ("`country'" == "guy") local countryname "Guyana"
 if ("`country'" == "hti") local countryname "Haiti"
 if ("`country'" == "jam") local countryname "Jamaica"
 if ("`country'" == "sur") local countryname "Suriname"
+if ("`country'" == "lca") local countryname "St. Lucia"
 if ("`country'" == "lac") local countryname "lac"
 
 local pais lower(`"`countryname'"')
@@ -406,7 +417,103 @@ if inlist("`source'", "sedlac", "lablac" ) {
 }
 
 
+/*===========================================================================
+2.4 procedure to merge SEDLAC and BASE						
+===========================================================================*/
 
+if ("`merge'" == "merge" & "`nature'" == "household" & ) {
+	tempfile basef
+	
+	if ((wordcount("`years'") > 1 | substr("`years'",5,1) == "/" )) {
+		disp as error "You cannot select more than one year when using 'merge' option"
+		error
+	}
+	
+	qui datalib_sedlac  `if' `in', country(`country') years(`years') circa(`circa') ///
+	`survey' `period' nature(`nature') type(sedlac) path(`path') `clear' `vermast' ///
+	`veralt' `vintage' `project' retlist  `options' `modules'
+	
+	* Set locals for data information
+	local veralt_p   = r(veralt)
+	local vermast_p  = r(vermast)
+	local project_p  = r(project)
+	local surveys    = r(surveys)
+	local acronym    = r(acronym)
+	local name       =  r(country) 
+	local type       = r(type)
+	local nature     = r(nature)
+	local year       = r(years)
+	local survname   = r(survname)
+	local surveyid   = r(surveyid)
+	
+	cap local per = "_"+r(period)
+	if _rc local per ""
+	local vintages = r(vintage)
+	local vintages: subinstr local vintages  "," " ", all
+	
+	local sort "id com"
+	foreach vintage of local vintages {
+		qui describe using "${rootdatalib}/sedlac/`country'/`country'_`year'_`survname'/`surveyid'/Data/Harmonized/`vintage'.dta",  varlist
+		local vars_sedlac "`vars_sedlac' `r(varlist)'"
+	}
+	* Local with SEDLAC variables (to rename in case appear in _BASE)
+	local vars_sedlac : list vars_sedlac - sort
+	
+	
+	global vintage "`surveyid'"
+	
+	* set trace on 
+	run "C:\ado\personal\Datalib-dofiles_sedlac/datalib_mergesedlac.do" // load base
+	
+	* set trace off
+	global vintage ""
+	
+	* Drop _merge variable if present
+	capture drop _merge
+	
+	capture confirm variable componente, exact
+	if (_rc == 0) ren componente com
+	
+	* Confirm existence with the same name
+	foreach name of local vars_sedlac  {
+		capture confirm variable `name', exact
+		if (_rc == 0) ren `name' `name'_original
+	}
+	
+	qui save `basef', replace
+	datalib_sedlac  `if' `in', country(`country') years(`years') ///
+	circa(`circa') `survey' `period' nature(`nature') type(sedlac) path(`path') ///
+	`clear' `ppp' `replace' `incppp' `plppp' `cpippp' `vermast' `veralt' ///
+	`project' `ignoreerror' nocohh `clean' `language' `vars' `pppyear' `modules' `options'
+	
+	capture confirm variable componente, exact
+	if (_rc == 0) ren componente com
+	
+	* Sort id component to merge for the case of Argentina
+	qui {
+		
+		* Confirm existence with the same name with SEDLAC
+		foreach name in ano pais encuesta tipo  {
+			capture confirm variable `name', exact
+			if (_rc == 0) ren `name' `name'_sedlac
+		}
+		
+		merge 1:1 id com using `basef', `keepusing'
+		
+		* Tabulate merge
+		tab _merge
+		local merge = r(r)
+		return scalar merge = r(r)
+	} // end of qui 
+	
+	noi {
+		if `merge' == 1 {
+			di in y  "Perfect match on merge" 
+			drop _merge
+		}
+		else disp "mismatch on merge. Check by typing" `"{stata tab _merge: tab _merge}"'
+	} 		// end of noi 
+}
 
 
 end
@@ -420,6 +527,13 @@ exit
 Notes:
 WE HAVE ADDED LABLAC!!! Additionally i) Add LAC as a new country. (bins) ii) Add option year(year) in info option. iii) Bolivia 2003-2004 is not longer available throughout 2003, only throughout 2004. iv) Add option vars v) Fix bugs
 
+
+v 4.2		  <03April2019>		<Laura Moreno>
+incorporate SEDLAC-03
+New structure of SEDLAC-02
+New structure of LABLAC-01
+fix optoin vars
+fix language cedlas
 
 v 4.2		  <29Jan2018>		<Andres Castaneda>
 incorporate SEDLAC-03
@@ -662,7 +776,7 @@ di date("$S_DATE", "DMY")
 2.4 procedure to merge SEDLAC and BASE						
 ===========================================================================*/
 
-if ("`merge'" == "merge" & "`nature'" == "household" ) {
+if ("`merge'" == "merge" & "`nature'" == "household" & ) {
 	tempfile basef
 	
 	if ((wordcount("`years'") > 1 | substr("`years'",5,1) == "/" )) {
@@ -705,7 +819,7 @@ if ("`merge'" == "merge" & "`nature'" == "household" ) {
 	
 	* set trace on 
 	run "C:\ado\personal\Datalib-dofiles_sedlac/datalib_mergesedlac.do" // load base
-	hhh
+	
 	* set trace off
 	global vintage ""
 	

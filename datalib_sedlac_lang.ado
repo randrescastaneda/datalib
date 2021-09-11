@@ -10,12 +10,8 @@ if "`project'"=="03"  {
 	1. English labels
 	====================================================================*/	
 	* 1.2 English
-	cap label language en, delete
-	label language en, new
-	
-	/*====================================================================
-	1.1. Common variables 02 and 03: new labels in spanish
-	====================================================================*/
+	qui cap label language en, delete
+	qui cap label language en, new
 	cap lab var ano_ocaux  "Survey Year"
 	cap lab var asal  "Dummy for salaried worker in main occupation"
 	cap lab var cohi  "Indicator of income response: =1 if coherent - individual"
@@ -55,12 +51,9 @@ if "`project'"=="03"  {
 	cap lab var ppp05  "PPP conversion factor (2005)"
 	cap lab var relacion  "Relationship with head of household (harmonized)"
 	cap lab var sector1d  "Activity sector - 1 digit ISIC"
+	cap lab var isco08_2d  "Occupation code, ISCO 08 (2 digits)"
 	cap lab var tipo  "Database category"
 	cap lab var wage  "Hourly income in main occupation"
-	
-	/*====================================================================
-	1.2. New Variables (pr03): labels
-	====================================================================*/
 	cap lab var celular_ind  "Has mobile phone (individual)"
 	cap lab var iasalnp  "Labor income from secondary occupation - total"
 	cap lab var iasalnp_m  "Labor income from secondary occupation - monetary"
@@ -116,6 +109,135 @@ if "`project'"=="03"  {
 	cap lab var relab_s  "Type of employment in secondary occupation"
 	cap lab var relacion_est  "Relationship with head of household (standardized)"
 	cap lab var strata  "Stratification variable"
+	
+	*New variables (GMD 2.0 and others)
+	cap lab var toilet_acc  "Access to flushed toilet"
+	cap lab var dis_visual   "Eye Disability"
+	cap lab var dis_auditiva "Hearing Disability"
+	cap lab var dis_caminar  "Walk Disability"
+	cap lab var dis_concent  "Concentration Disorder"
+	cap lab var dis_cuidado  "Selfcare Disability"
+	cap lab var dis_leng     "Communication Disability"
+	cap lab var tipo_seguro  "Type of health insurance"
+	cap lab var enfermo      "Sick or injured in the last 90 days"
+	cap lab var seguro_salud "Have current medical insurance"
+	cap lab var visita       "visit to the doctor in the last 90 days (only those sick or injured)"
+	cap lab var edad_min     "people aged 10 and older answer the labor module"
+	cap lab var imp_wat_rec      "Improved water recommended estimate"
+	cap lab var imp_wat_underest "Improved water underest estimate"
+	cap lab var imp_wat_overest  "Improved water overest estimate"
+	cap lab var piped            "Access to piped water"
+	cap lab var piped_to_prem    "Access to piped water on premises"
+	cap lab var water_source     "Sources of drinking water"
+	cap lab var water_original   "Original water variable"
+	cap lab var imp_san_rec         "Improved sanitation facility recommended estimate"
+	cap lab var imp_san_underest    "Improved sanitation facility underest estimate"
+	cap lab var imp_san_overest     "Improved sanitation facility overest estimate"
+	cap lab var sewer               "Access to sewer"
+	cap lab var open_def            "Access to any sanitation facility"
+	cap lab var sanitation_source   "Main sanitation source"
+	cap lab var sanitation_original "Original sanitation variable"
+	cap lab var dweltyp         "Types of Dwelling"
+	cap lab var techo           "Main material used for roof"
+	cap lab var pared           "Main material used for external walls"
+	cap lab var piso            "Main material used for floor" 
+	cap lab var kitchen         "Separate kitchen in the dwelling" 
+	cap lab var bath            "Bathing facility in the dwelling" 
+	cap lab var rooms           "Number of habitable rooms" 
+	cap lab var adq_house       "Acquisition of house" 
+	cap lab var adq_land        "Acquisition of land" 
+	cap lab var dwelownlti      "Legal title for Ownership" 
+	cap lab var fem_dwelownlti  "Legal title for Ownership - Female" 
+	cap lab var dwelownti       "Type of Legal document" 
+	cap lab var selldwel        "Right to sell dwelling" 
+	cap lab var transdwel       "Right to transfer dwelling" 
+	cap lab var ownland         "Ownership of land" 
+	cap lab var doculand        "Legal document for residential land" 
+	cap lab var fem_doculand    "Legal document for residential land - female" 
+	cap lab var landownti       "Land Ownership" 
+	cap lab var selland        "Right to sell land" 
+	cap lab var transland       "Right to transfer land" 
+	cap lab var typlivqrt       "Types of living quarters" 
+	cap lab var ybuilt          "Year the dwelling built" 
+	cap lab var areaspace       "Area (square meters)" 
+	cap lab var waste           "Main types of sewage disposal system" 
+	cap lab var gas             "Connection to gas/Usage of gas" 
+	cap lab var cooksource      "Main source of cooking fuel" 
+	cap lab var lightsource     "Main source of lighting"
+	cap lab var elec_acc               "Connection to Electricity"         
+	cap lab var elechr_acc             "Electricity Availability"
+	cap lab var electyp                "Type of Lightning/Electricity"
+	cap lab var sewmach                "Sewing Machine"
+	cap lab var stove                  "Stove or Cooker"
+	cap lab var ricecook               "Rice Cooker"
+	cap lab var fan                    "Fan"
+	cap lab var etablet                "Electronic Tablet"
+	cap lab var ewpump                 "Electric Water Pump"
+	cap lab var oxcart                 "Animal Cart/Oxcart"
+	cap lab var boat                   "Boat"
+	cap lab var canoe                  "canoe"
+	cap lab var nfl                    "No in the LFS"
+	cap lab var njobs                  "Total number of jobs"
+	cap lab var occusec                "Sector of Activity-Main Job"
+	cap lab var occusec_s              "Sector of Activity-Secondary Job"
+	cap lab var occusec_o              "Sector of Activity-Other"
+	cap lab var firmsize_l             "Firm size (lower bracket)-Main Job"
+	cap lab var firmsize_l_s           "Firm size (lower bracket)-Secondary Job"
+	cap lab var firmsize_l_o           "Firm size (lower bracket)-Other"
+	cap lab var firmsize_u             "Firm size (upper bracket)-Main Job"
+	cap lab var firmsize_u_s           "Firm size (upper bracket)-Secondary Job"
+	cap lab var firmsize_u_o           "Firm size (upper bracket)-Other"
+	cap lab var sector1d_s             "Industry classification CIIU-Secondary Job"
+	cap lab var sector1d_o             "Industry classification CIIU-Other"
+	cap lab var sector_orig            "Country-Specific Industry Codes-Main Job"
+	cap lab var sector_orig_s          "Country-Specific Industry Codes-Secondary Job"
+	cap lab var sector_orig_o          "Country-Specific Industry Codes-Other"
+	cap lab var occup                  "Occupational Classification-Main Job"
+	cap lab var occup_s                "Occupational Classification-Secondary Job"
+	cap lab var occup_o                "Occupational Classification-Other"
+	cap lab var ila_extraord           "Total labor income extraordinary"
+	cap lab var wage_base              "Last wage payment-Main Job"
+	cap lab var bonos                  "Bonos-Main Job"
+	cap lab var wage_base_s            "Last wage payment-Secondary Job"
+	cap lab var wage_base_o            "Last wage payment-Other"
+	cap lab var bonos_s                "Bonos-Secondary Job"
+	cap lab var bonos_o                "Bonos-Other"
+	cap lab var pwater_exp             "Total annual consumption of water supply/piped water"
+	cap lab var water_exp              "Total annual consumption of water supply and hot water"
+	cap lab var garbage_exp            "Total annual consumption of garbage collection"
+	cap lab var sewage_exp             "Total annual consumption of sewage collection"
+	cap lab var waste_exp              "Total annual consumption of garbage and sewage collection"
+	cap lab var dwelothsvc_exp         "Total annual consumption of other services relating to the dwelling"
+	cap lab var elec_exp               "Total annual consumption of electricity"
+	cap lab var ngas_exp               "Total annual consumption of network/natural gas"
+	cap lab var LPG_exp                "Total annual consumption of liquefied gas"
+	cap lab var gas_exp                "Total annual consumption of network/natural and liquefied gas"
+	cap lab var diesel_exp             "Total annual consumption of diesel"
+	cap lab var kerosene_exp           "Total annual consumption of kerosene"
+	cap lab var othliq_exp             "Total annual consumption of other liquid fuels"
+	cap lab var liquid_exp             "Total annual consumption of all liquid fuels"
+	cap lab var wood_exp               "Total annual consumption of firewood"
+	cap lab var coal_exp               "Total annual consumption of coal"
+	cap lab var peat_exp               "Total annual consumption of peat"
+	cap lab var othsol_exp             "Total annual consumption of other solid fuels"
+	cap lab var solid_exp              "Total annual consumption of all solid fuels"
+	cap lab var othfuel_exp            "Total annual consumption of all other fuels"
+	cap lab var central_exp            "Total annual consumption of central heating"
+	cap lab var hwater_exp             "Total annual consumption of hot water"
+	cap lab var heating_exp            "Total annual consumption of heating"
+	cap lab var utl_exp                "Total annual consumption of all utilities excluding telecom and other housing"
+	cap lab var dwelmat_exp            "Total annual consumption of materials for the maintenance and repair of the dwelling"
+	cap lab var dwelsvc_exp            "Total annual consumption of services for the maintenance and repair of the dwelling"
+	cap lab var othhousing_exp         "Total annual consumption of dwelling repair/maintenance"
+	cap lab var transfuel_exp          "Total annual consumption of fuels for personal transportation"
+	cap lab var landphone_exp          "Total annual consumption of landline phone services"
+	cap lab var cellphone_exp          "Total annual consumption of cell phone services"
+	cap lab var tel_exp                "Total consumption of all telephone services"
+	cap lab var internet_exp           "Total consumption of internet services"
+	cap lab var telefax_exp            "Total consumption of telefax services"
+	cap lab var comm_exp               "Total consumption of all telecommunication services"
+	cap lab var tv_exp                 "Total consumption of TV broadcasting services"
+	cap lab var tvintph_exp            "Total consumption of tv, internet and telephone"
 	
 	/*====================================================================
 	1.3. Common variables: same labels in Spanish but no labels in English
@@ -182,7 +304,7 @@ if "`project'"=="03"  {
 	
 	
 	/*====================================================================
-	1.4. Use 02 English labels
+	1.4. Other labels
 	====================================================================*/
 	cap lab var aedu  "Years of education completed"
 	cap lab var agua  "Does the dwelling have access to a water supply system?"
@@ -220,6 +342,7 @@ if "`project'"=="03"  {
 	cap lab var hogarsec  "Member of secondary household"
 	cap lab var hombre  "Sex"
 	cap lab var hstrp  "Hours worked in main occupation"
+	cap lab var hstrs  "Hours worked in secondary occupation"
 	cap lab var hstrt  "Total hours worked in all occupations"
 	cap lab var icap  "Capital income"
 	cap lab var ictap  "Self-employed income"
@@ -363,13 +486,12 @@ if "`project'"=="03"  {
 	*Common variables PR02 and PR03 value labels
 	cap lab define   relacion_en  ///   
 	1 "Head" ///
-	2 "Spouse" ///
-	3 "Son /Daughter" ///
-	4 "Other relative" ///
-	5 "In-law" ///
-	6 "Lodger" ///
-	7 "Domestic employee" ///
-	8 "Relative of domestic employee" 
+	2 "Spouse - Partner" ///
+	3 "Son/Daughter" ///
+	4 "Parent/Parent-in-law" ///
+	5 "Other relative" ///
+	6 "Non relative"
+	
 	cap lab define   hogarsec_en  ///   
 	0 "No " ///
 	1 "Yes" 
@@ -520,6 +642,50 @@ if "`project'"=="03"  {
 	15 "Other community, social and personal service activities" ///
 	16 "Activities of private households as employers " ///
 	17 " Extraterritorial organizations and bodies" 
+	cap lab define   isco08_2d_en  /// 
+	1  "Commissioned Armed Forces Officers"  /// 
+	2  "Non-commissioned Armed Forces Officers"  /// 
+	3  "Armed Forces Occupations, Other Ranks"  /// 
+	11 "Chief Executives, Senior Officials and Legislators"  /// 
+	12 "Administrative and Commercial Managers"  /// 
+	13 "Production and Specialized Services Managers"  /// 
+	14 "Hospitality, Retail and Other Services Managers"  /// 
+	21 "Science and Engineering Professionals"  /// 
+	22 "Health Professionals"  /// 
+	23 "Teaching Professionals"  /// 
+	24 "Business and Administration Professionals"  /// 
+	25 "Information and Communications Technology Professionals"  /// 
+	26 "Legal, Social and Cultural Professionals"  /// 
+	31 "Science and Engineering Associate Professionals"  /// 
+	32 "Health Associate Professionals"  /// 
+	33 "Business and Administration Associate Professionals"  /// 
+	34 "Legal, Social, Cultural and Related Associate Professionals"  /// 
+	35 "Information and Communications Technicians"  /// 
+	41 "General and Keyboard Clerks"  /// 
+	42 "Customer Services Clerks"  /// 
+	43 "Numerical and Material Recording Clerks"  /// 
+	44 "Other Clerical Support Workers"  /// 
+	51 "Personal Services Workers"  /// 
+	52 "Sales Workers"  /// 
+	53 "Personal Care Workers"  /// 
+	54 "Protective Services Workers"  /// 
+	61 "Market-oriented Skilled Agricultural Workers"  /// 
+	62 "Market-oriented Skilled Forestry, Fishery and Hunting Workers"  /// 
+	63 "Subsistence Farmers, Fishers, Hunters and Gatherers"  /// 
+	71 "Building and Related Trades Workers (excluding Electricians)"  /// 
+	72 "Metal, Machinery and Related Trades Workers"  /// 
+	73 "Handicraft and Printing Workers"  /// 
+	74 "Electrical and Electronic Trades Workers"  /// 
+	75 "Food Processing, Woodworking, Garment and Other Craft and Related Trades Workers"  /// 
+	81 "Stationary Plant and Machine Operators"  /// 
+	82 "Assemblers"  /// 
+	83 "Drivers and Mobile Plant Operators"  /// 
+	91 "Cleaners and Helpers"  /// 
+	92 "Agricultural, Forestry and Fishery Labourers"  /// 
+	93 "Labourers in Mining, Construction, Manufacturing and Transport"  /// 
+	94 "Food Preparation Assistants"  /// 
+	95 "Street and Related Sales and Services Workers"  /// 
+	96 "Refuse Workers and Other Elementary Workers"
 	cap lab define   contrato_en  ///   
 	0 "Does not have" ///
 	1 "Has" 
@@ -549,6 +715,338 @@ if "`project'"=="03"  {
 	4 "divorced/separated" ///
 	5 "widowed"
 	
+	*New variables (GMD 2.0 and others)
+	cap lab def toilet_acc_en ///
+	0 "No" ///
+	1 "Yes, in premise" ///
+	2 "Yes, but not in premise including public toilet" ///
+	3 "Yes, unstated whether in or outside premise"
+	
+	cap lab define   tipo_seguro_en  ///   
+	0 "public or related to work (social work)" ///
+	1 "private"
+	
+	cap lab define   enfermo_en  ///   
+	0 "No" ///
+	1 "Yes" 
+	
+	cap lab define   seguro_salud_en  ///   
+	0 "No" ///
+	1 "Yes" 
+	
+	cap lab define   visita_en  ///   
+	0 "No" ///
+	1 "Yes"
+
+	cap lab define   imp_wat_rec_en  ///   
+	0 "No" ///
+	1 "Yes" 
+	
+	cap lab define   imp_wat_underest_en  ///   
+	0 "No" ///
+	1 "Yes"
+	
+	cap lab define   imp_wat_overest_en  ///   
+	0 "No" ///
+	1 "Yes" 
+	
+	cap lab define   piped_en  ///   
+	0 "No" ///
+	1 "water_source 1,2 or 3"
+	
+	cap lab define   piped_to_prem_en  ///   
+	0 "No" ///
+	1 "water_source 1,2 or 3"
+	
+	cap lab define   water_source_en  ///   
+	1  "Piped water into dwelling" ///
+	2  "Piped water to yard/plot" ///
+	3  "Public tap or standpipe" ///
+	4  "Tubewell or borehole" ///
+	5  "Protected dug well" ///
+	6  "Protected spring" ///
+	7  "Bottled water" ///
+	8  "Rainwater" ///
+	9  "Unprotected spring" ///
+	10 "Unprotected dug well" ///
+	11 "Cart with small tank/drum" ///
+	12 "Tanker-truck" ///
+	13 "Surface water" ///
+	14 "Other"
+	
+	cap lab define   imp_san_rec_en  ///   
+	0 "No" ///
+	1 "Yes"
+	
+	cap lab define   imp_san_underest_en  ///   
+	0 "No" ///
+	1 "Yes"
+	
+	cap lab define   imp_san_overest_en  ///   
+	0 "No" ///
+	1 "Yes"
+	
+	cap lab define   sewer_en  ///   
+	0 "No" ///
+	1 "Yes"
+	
+	cap lab define   open_def_en  ///   
+	0 "No" ///
+	1 "Yes"
+	
+	cap lab define   sanitation_source_en  ///   
+	1  "A flush toilet" ///
+	2  "A piped sewer system" ///
+	3  "A septic tank" ///
+	4  "Pit latrine" ///
+	5  "Ventilated improved pit latrine" ///
+	6  "Pit latrine with slab" ///
+	7  "Composting toilet" ///
+	8  "Special case" ///
+	9  "A flush/pour flush to elsewhere" ///
+	10 "A pit latrine without slab" ///
+	11 "Bucket" ///
+	12 "Hanging toilet or hanging latrine" ///
+	13 "No facilities or bush or field" ///
+	14 "Other"	
+	
+	cap lab define   dweltyp_en  ///   
+	1  "Detached house" ///
+	2  "Multi-family house" ///
+	3  "Separate apartment" ///
+	4  "Communal apartment" ///
+	5  "Room in a larger dwelling" ///
+	6  "Several buildings connected" ///
+	7  "Several separate buildings" ///
+	8  "Improvised housing unit" ///
+	99  "Other"
+	
+	cap lab define   techo_en  ///   
+	1  "Adobe, zarzo, lodo" ///
+	2  "Paja" ///
+	3  "Madera" ///
+	4  "Hierro/Láminas de metal" ///
+	5  "Cemento" ///
+	6  "Mosaicos/Ladrillos" ///
+	7  "Asbesto" ///
+	99  "Other"
+	
+	cap lab define   pared_en  ///   
+	1  "Adobe, zarzo, lodo" ///
+	2  "Paja" ///
+	3  "Madera" ///
+	4  "Hierro/Láminas de metal" ///
+	5  "Cemento" ///
+	6  "Mosaicos/Ladrillos" ///
+	7  "Asbesto" ///
+	99  "Other"
+	
+	cap lab define   piso_en  ///   
+	1  "Earth" ///
+	3  "Wood" ///
+	4  "Polished wood / mosaics" ///
+	5  "Cement" ///
+	6  "Bricks" ///
+	7  "Asbestos" ///
+	99  "Other"
+	
+	cap lab define   kitchen_en  ///   
+	0 "No" ///
+	1 "Yes"
+	
+	cap lab define   bath_en  ///   
+	0 "No" ///
+	1 "Yes"
+	
+	cap lab define   adq_house_en  ///   
+	1  "Purchased - fully paid" ///
+	2  "Purchased - paying" ///
+	3  "Inherited" ///
+	4  "Rented" ///
+	5  "Gifted / loaned" ///
+	6  "Received for work services" ///
+	99  "Other"
+	
+	cap lab define   adq_land_en  ///   
+	1  "Purchased - fully paid" ///
+	2  "Purchased - paying" ///
+	3  "Inherited" ///
+	4  "Rented" ///
+	5  "Gifted / loaned" ///
+	6  "Received for work services" ///
+	99  "Other"
+	
+	cap lab define   dwelownlti_en  ///   
+	0 "No" ///
+	1 "Yes"
+	
+	cap lab define   fem_dwelownlti_en  ///   
+	0 "No" ///
+	1 "Yes"
+	
+	cap lab define   selldwel_en  ///   
+	0 "No" ///
+	1 "Yes"
+	
+	cap lab define   transdwel_en  ///   
+	0 "No" ///
+	1 "Yes"
+	
+	cap lab define   ownland_en  ///   
+	0 "No" ///
+	1 "Yes"
+	
+	cap lab define   doculand_en  ///   
+	0 "No" ///
+	1 "Yes"
+	
+	cap lab define   fem_doculand_en  ///   
+	0 "No" ///
+	1 "Yes"
+	
+	cap lab define   selland_en  ///   
+	0 "No" ///
+	1 "Yes"
+	
+	cap lab define   transland_en  ///   
+	0 "No" ///
+	1 "Yes"
+	
+	cap lab define   transland_en  ///   
+	0 "No" ///
+	1 "Yes"
+	
+	cap lab define   waste_en  ///   
+	1  "Solid waste collected on a regular basis by authorized collectors" ///
+	2  "Solid waste collected on an irregular basis by authorized collectors" ///
+	3  "Solid waste collected by self-appointed collectors" ///
+	4  "Occupants dispose of solid waste in a local dump supervised by authorities" ///
+	5  "Occupants dispose of solid waste in a local dump not supervised by authorities" ///
+	6  "Occupants burn solid waste" ///
+	7  "Occupants bury solid waste" ///
+	8  "Occupants dispose solid waste into river, sea, creek, pond" ///
+	9  "Occupants compost solid waste" ///
+	10  "Other arrangement"
+	
+	cap lab define   gas_en  ///   
+	0  "No " ///
+	1  "Yes, piped gas (LNG)" ///
+	2  "Yes, bottled gas (LPG)" ///
+	3  "Yes, but don't know or other"
+	
+	cap lab define   cooksource_en  ///   
+	1  "Firewood" ///
+	2  "Kerosene" ///
+	3  "Charcoal" ///
+	4  "Electricity" ///
+	5  "Gas" ///
+	9  "Other"
+	
+	cap lab define   lightsource_en  ///   
+	1  "Electricity " ///
+	2  "Kerosene" ///
+	3  "Candles" ///
+	4  "Gas" ///
+	5  "Other"
+	
+	cap lab define   elec_acc_en  ///   
+	1  "Yes, public/quasi public" ///
+	2  "Yes, private" ///
+	3  "Yes, source unstated" ///
+	4  "No"
+	
+	cap lab define   electyp_en  ///   
+	1  "Electricity " ///
+	2  "Gas " ///
+	3  "Lamp" ///
+	4  "Others"
+	
+	cap lab define   sewmach_en  ///   
+	0 "No" ///
+	1 "Yes"
+	
+	cap lab define   stove_en  ///   
+	0 "No" ///
+	1 "Yes"
+	
+	cap lab define   ricecook_en  ///   
+	0 "No" ///
+	1 "Yes"
+	
+	cap lab define   fan_en  ///   
+	0 "No" ///
+	1 "Yes"
+	
+	cap lab define   etablet_en  ///   
+	0 "No" ///
+	1 "Yes"
+	
+	cap lab define   ewpump_en  ///   
+	0 "No" ///
+	1 "Yes"
+	
+	cap lab define   oxcart_en  ///   
+	0 "No" ///
+	1 "Yes"
+	
+	cap lab define   boat_en  ///   
+	0 "No" ///
+	1 "Yes"
+	
+	cap lab define   canoe_en  ///   
+	0 "No" ///
+	1 "Yes"
+	
+	cap lab define   occusec_en  ///   
+	1  "Public Sector, Central Government, Army" ///
+	2  "Private, NGO" ///
+	3  "State Owned " ///
+	4  "Public or State-owned, but cannot distinguish"
+	
+	cap lab define   occusec_o_en  ///   
+	1  "Public Sector, Central Government, Army" ///
+	2  "Private, NGO" ///
+	3  "State Owned" ///
+	4  "Public or State-owned, but cannot distinguish"
+	
+	cap lab define   occup_en  ///   
+	1  "Managers" ///
+	2  "Professionals" ///
+	3  "Technicians and associate professionals" ///
+	4  "Clerical support workers" ///
+	5  "Service and sales workers" ///
+	6  "Skilled agricultural, forestry and fishery workers" ///
+	7  "Craft and related trades workers" ///
+	8  "Plant and machine operators, and assemblers" ///
+	9  "Elementary occupations" ///
+	10 "Armed forces occupations" ///
+	99 "Other/unspecified"
+	
+	cap lab define   occup_s_en  ///   
+	1  "Managers" ///
+	2  "Professionals" ///
+	3  "Technicians and associate professionals" ///
+	4  "Clerical support workers" ///
+	5  "Service and sales workers" ///
+	6  "Skilled agricultural, forestry and fishery workers" ///
+	7  "Craft and related trades workers" ///
+	8  "Plant and machine operators, and assemblers" ///
+	9  "Elementary occupations" ///
+	10 "Armed forces occupations" ///
+	99 "Other/unspecified"
+	
+	cap lab define   occup_o_en  ///   
+	1  "Managers" ///
+	2  "Professionals" ///
+	3  "Technicians and associate professionals" ///
+	4  "Clerical support workers" ///
+	5  "Service and sales workers" ///
+	6  "Skilled agricultural, forestry and fishery workers" ///
+	7  "Craft and related trades workers" ///
+	8  "Plant and machine operators, and assemblers" ///
+	9  "Elementary occupations" ///
+	10 "Armed forces occupations" ///
+	99 "Other/unspecified"
 	
 	
 	
@@ -603,21 +1101,80 @@ if "`project'"=="03"  {
 	cap label values dvacaciones dvacaciones_en
 	cap label values sindicato sindicato_en
 	cap label values estado_civil estado_civil_en
+	cap lab values isco08_2d isco08_2d_en
 	
-	
-	
-	
-	
-	
-	
+	*New variables (GMD 2.0 and others)
+    cap  label values toilet_acc toilet_acc_en
+	cap  label values tipo_seguro tipo_seguro_en
+	cap  label values enfermo enfermo_en
+	cap  label values seguro_salud seguro_salud_en
+	cap  label values visita visita_en
+	cap  label values imp_wat_rec imp_wat_rec_en      
+    cap  label values imp_wat_underest imp_wat_underest_en
+    cap  label values imp_wat_overest  imp_wat_overest_en
+    cap  label values piped piped_en           
+    cap  label values piped_to_prem piped_to_prem_en   
+    cap  label values water_source water_source_en 
+    cap  label values imp_san_rec imp_san_rec_en
+    cap  label values imp_san_underest imp_san_underest_en
+    cap  label values imp_san_overest imp_san_overest_en
+    cap  label values sewer sewer_en
+    cap  label values open_def open_def_en
+    cap  label values sanitation_source sanitation_source_en
+	cap  label values dweltyp dweltyp_en
+	cap  label values techo techo_en
+	cap  label values pared pared_en
+	cap  label values piso             piso_en 
+	cap  label values kitchen          kitchen_en
+	cap  label values bath             bath_en
+	cap  label values adq_house        adq_house_en
+	cap  label values adq_land         adq_land_en
+	cap  label values dwelownlti       dwelownlti_en
+	cap  label values fem_dwelownlti   fem_dwelownlti_en
+	cap  label values dwelownti        dwelownti_en
+	cap  label values selldwel         selldwel_en
+	cap  label values transdwel        transdwel_en
+	cap  label values ownland          ownland_en
+	cap  label values doculand         doculand_en
+	cap  label values fem_doculand     fem_doculand_en
+	cap  label values selland         sellland_en
+	cap  label values transland        transland_en
+	cap  label values waste            waste_en
+	cap  label values gas              gas_en
+	cap  label values cooksource       cooksource_en
+	cap  label values lightsource      lightsource_en
+	cap  label values elec_acc               elec_acc_en               
+	cap  label values electyp                electyp_en
+	cap  label values sewmach                sewmach_en
+	cap  label values stove                  stove_en
+	cap  label values ricecook               ricecook_en
+	cap  label values fan                    fan_en
+	cap  label values etablet                etablet_en
+	cap  label values ewpump                 ewpump_en
+	cap  label values oxcart                 oxcart_en
+	cap  label values boat                   boat_en
+	cap  label values canoe                  canoe_en
+	cap  label values nfl                    nfl_en
+	cap  label values njobs                  njobs_en
+	cap  label values occusec                occusec_en
+	cap  label values occusec_s              occusec_s_en
+	cap  label values occusec_o              occusec_o_en
+	cap  label values sector1d_s             sector1d_s_en
+	cap  label values sector1d_o             sector1d_o_en
+	cap  label values sector_orig            sector_orig_en
+	cap  label values sector_orig_s          sector_orig_s_en
+	cap  label values sector_orig_o          sector_orig_o_en
+	cap  label values occup                  occup_en
+	cap  label values occup_s                occup_s_en
+	cap  label values occup_o                occup_o_en
+
 	
 	/*====================================================================
 	2. Portuguese Labels
 	====================================================================*/
 	*1.2 Portuguese
-	cap label language pt, delete
-	label language pt, new
-	
+	qui cap label language pt, delete
+	qui cap label language pt, new
 	
 	cap lab var aedu  "Anos de educação completos"
 	cap lab var agua  "Habitação possui instalação de água?"
@@ -656,6 +1213,7 @@ if "`project'"=="03"  {
 	cap lab var hogarsec  "Membro de domicílio secundário"
 	cap lab var hombre  "Sexo"
 	cap lab var hstrp  "Horas trabalhadas na ocupação principal"
+	cap lab var hstrs  "Horas trabalhadas na ocupação secundária"
 	cap lab var hstrt  "Horas trabalhadas em todas as ocupações"
 	cap lab var icap  "Rendimento de capital"
 	cap lab var ictap  "Rendimento pelo trabalho por conta própria"
@@ -694,21 +1252,20 @@ if "`project'"=="03"  {
 	cap lab var tv_cable  "Habitação possui tv a cabo ou por satélite?"
 	cap lab var urbano  "Dummy de área de residência"
 	cap lab var video  "Habitação possui VCR ou DVD?"
-	
-	
-	cap lab define   relacion_pt ///   
+
+
+	cap lab define   relacion_pt ///    1 "Jefe" 2 "Cónyuge - Esposo/a" 3 "Hijo/a - Hijastro/a" 4 "Padre - Madre - Suegro/a" 5 "Otro Pariente" 9 "No Pariente"
 	1 "Chefe" ///
 	2 "Conjuge" ///
 	3 "Filho" ///
-	4 "Outro parente" ///
-	5 "Agregado" ///
-	6 "Pensionista" ///
-	7 "Empregado Doméstico" ///
-	8 "Parente de Empregado doméstico"  */
+	4 "Pais/Sogros" ///
+	5 "Outro parente" ///
+	6 "Não Parente" ///
+
 	cap lab define   hogarsec_pt ///   
 	0 "Não " ///
 	1 "Sim" 
-	
+
 	cap lab define   hombre_pt ///   
 	0 "Mulher" ///
 	1 "Homem" 
@@ -724,12 +1281,11 @@ if "`project'"=="03"  {
 	cap lab define   casado_pt ///   
 	0 "Não casado" ///
 	1 "Casado" 
-	cap lab define   raza_pt ///   
-	1 "Branco" ///
-	2 "Mestiço" ///
-	3 "Indígena" ///
-	4 "Afro-americano" ///
-	5 "Outro"  */
+	cap lab define   raza_pt /// 
+	1 "Indígena" ///
+	2 "Afro-americano" ///
+	3 "Indígena e Afro-americano" ///
+	4 "Outro"
 	cap lab define   propieta_pt ///   
 	0 "Não proprietário" ///
 	1 "Proprietário" 
@@ -889,15 +1445,15 @@ if "`project'"=="03"  {
 	cap lab define   sindicato_pt ///   
 	0 "Não" ///
 	1 "Sim" 
-	
+
 	cap lab def estado_civil_pt ///
 	1 "casado"                  ///
 	2 "nunca casado"            ///
 	3 "viver juntos"            ///
 	4 "divorciado / separado"   ///
 	5 "viúvo" 
-	
-	
+
+
 	* cap label values relacion relacion_pt
 	cap label values hogarsec hogarsec_pt
 	cap label values hombre hombre_pt
@@ -956,7 +1512,6 @@ if "`project'"=="03"  {
 	/*====================================================================
 	3. Spanish Labels
 	====================================================================*/
-	cap label language es, delete
 	cap label language es, new
 	cap label var    pais            	"País"
 	cap label var    ano             	"Año de la encuesta"
@@ -1042,6 +1597,7 @@ if "`project'"=="03"  {
 	cap label var    desocupa        	"Dummy de condición de actividad: desocupado"
 	cap label var    durades          	"Duración del desempleo en meses"
 	cap label var    hstrt            	"Horas trabajadas en todas las ocupaciones"
+	cap label var    hstrs            	"Horas trabajadas en la ocupación secundaria"
 	cap label var    hstrp            	"Horas trabajadas en la ocupación principal"
 	cap label var    deseo_emp        	"Desea conseguir otro empleo o trabajar más horas?"
 	cap label var    antigue          	"Antiguedad en la ocupación principal"
@@ -1181,7 +1737,12 @@ if "`project'"=="03"  {
 	cap label var    ipcf_ppp05	       "Ingreso per cápita familiar en dólares de 2005"
 	cap label var    ipcf_ppp11	       "Ingreso per cápita familiar en dólares de 2011"
 	
-	cap label define relacion_es 			1 "Jefe" 2 "Cónyuge - Esposo/a" 3 "Hijo/a - Hijastro/a" 4 "Padre - Madre - Suegro/a" 5 "Otro Pariente" 9 "No Pariente"
+	**GMD 2.0 (Spanish)
+	cap label var etablet                "Electronic Tablet"
+	
+	
+
+	cap label define relacion_es 			1 "Jefe" 2 "Cónyuge - Esposo/a" 3 "Hijo/a - Hijastro/a" 4 "Padre - Madre - Suegro/a" 5 "Otro Pariente" 6 "No Pariente"
 	cap label define hogarsec_es			0 "No" 1 "Si"
 	cap label define presec_es 0 "No" 1 "Si"
 	cap label define gedad1_es 			1 "[0,14]" 2 "[15,24]" 3 "[25,40]" 4 "[41,64]" 5 "[65+]"
@@ -1255,6 +1816,9 @@ if "`project'"=="03"  {
 	4 "divorciado/separado" ///
 	5 "viudo/a" 
 	
+	*GMD 2.0 (Spanish)
+	cap label define etablet_es  			0 "No" 1 "Si"
+	
 	cap label values relacion 			relacion_es
 	cap label values hogarsec 			hogarsec_es
 	cap label values presec presec_es
@@ -1322,7 +1886,8 @@ if "`project'"=="03"  {
 	cap label values prog_empleo 		prog_empleo_es 
 	cap label values asistencia 		asistencia_es 
 	cap label values dsegsal 			dsegsal_es 
-	cap label values estado_civil estado_civil_es
+	cap label values estado_civil       estado_civil_es
+	cap label values etablet            etablet_es
 	
 	
 	
@@ -1334,14 +1899,16 @@ if "`project'"=="03"  {
 
 if "`project'"!="03"  {
 	
+	
+
 	* 1.1 it is originally in Spanish
-	cap label language es, delete
-	label language es, new 
+	qui cap label language es, delete
+	qui cap label language es, new
 	
 	
 	*1.2 Portuguese
-	cap label language pt, delete
-	label language pt, new
+	qui cap label language pt, delete
+	qui cap label language pt, new
 	
 	cap lab var   pais   "Pais"
 	cap lab var   ano   "Ano"
@@ -1456,11 +2023,10 @@ if "`project'"!="03"  {
 	1 "Chefe" ///
 	2 "Conjuge" ///
 	3 "Filho" ///
-	4 "Outro parente" ///
-	5 "Agregado" ///
-	6 "Pensionista" ///
-	7 "Empregado Doméstico" ///
-	8 "Parente de Empregado doméstico"  */
+	4 "Pais/Sogros" ///
+	5 "Outro parente" ///
+	6 "Não Parente" 
+	
 	cap lab define   hogarsec_pt ///   
 	0 "Não " ///
 	1 "Sim" 
@@ -1703,8 +2269,8 @@ if "`project'"!="03"  {
 	cap label values sindicato sindicato_pt
 	
 	* 1.3 English
-	cap label language en, delete
-	label language en, new
+	qui cap label language en, delete
+	qui cap label language en, new
 	
 	cap lab var  pais   "Country"
 	cap lab var  ano   "Year"
@@ -1817,13 +2383,12 @@ if "`project'"!="03"  {
 	
 	cap lab define   relacion_en  ///   
 	1 "Head" ///
-	2 "Spouse" ///
-	3 "Son /Daughter" ///
-	4 "Other relative" ///
-	5 "In-law" ///
-	6 "Lodger" ///
-	7 "Domestic employee" ///
-	8 "Relative of domestic employee"  */
+	2 "Spouse - Partner" ///
+	3 "Son/Daughter" ///
+	4 "Parent/Parent-in-law" ///
+	5 "Other relative" ///
+	6 "Non relative"
+	
 	cap lab define   hogarsec_en  ///   
 	0 "No " ///
 	1 "Yes" 
@@ -2061,6 +2626,7 @@ if "`project'"!="03"  {
 	cap label values daguinaldo daguinaldo_en
 	cap label values dvacaciones dvacaciones_en
 	cap label values sindicato sindicato_en
+	
 	
 	*2 define language
 	

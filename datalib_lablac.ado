@@ -45,9 +45,9 @@ program define datalib_lablac, rclass
 	if ("`ignoreerror'" == "" & _rc != 0) error _rc
 	
 	
-	* ===========================START================================================
-	* ================= 1. Globals for each country ==============	 *
-	* ===============================================================================
+	* =========================================START================================================
+	* ======================= 1. Globals for each country ==============	 *
+	* ==============================================================================================
 	
 	
 	*_globalbases , nature(`nature')
@@ -214,9 +214,9 @@ program define datalib_lablac, rclass
 	* name of all the directories inside the country folder
 	local dirs1: dir "`root'/`country'" dirs "*"   // SUPER IMPORTANT
 	
-	* ==============================================================================
+	* =================================================================================================
 	* ======================= 3. Procedure to create Circa years ==============	 *
-	* =============================================================================
+	* =================================================================================================
 	
 	if ( "`circa'" != "" & "`years'" == "" ) {
 		foreach dir of local dirs1 {
@@ -246,9 +246,9 @@ program define datalib_lablac, rclass
 		return local circa `circa' // return circa years 
 	}  //  end of procedure to create circa years
 	
-	* ==============================================================================
+	* =================================================================================================
 	* ======================= 4.start new data base. ==============	 *
-	* ================================================================================
+	* =================================================================================================
 	
 	if ("`retlist'" == "") {
 		if ( "`clear'" == "clear") drop _all
@@ -262,9 +262,9 @@ program define datalib_lablac, rclass
 		}
 	}
 	
-	* ============================================================================
-	* =========== 5. Loop for YEARS: THIS IS THE MOST IMPORTANT SECTION============	 *
-	* ==============================================================================
+	* =================================================================================================
+	* ================== 5. Loop for YEARS: THIS IS THE MOST IMPORTANT SECTION============	 *
+	* =================================================================================================
 	
 	
 	numlist "`years'"
@@ -358,7 +358,7 @@ program define datalib_lablac, rclass
 		
 		tempfile aux
 		tempname a
-		postfile `a' str70 (file country year survey vermast veralt type project) using `aux', replace
+		postfile `a' str70 (file country year survey vermast veralt type project period) using `aux', replace
 		
 		* Loop with files
 		
@@ -371,14 +371,16 @@ program define datalib_lablac, rclass
 			/*survey :*/ lstrfun survey_f,  regexms(`"`folder'"', `"(^.*)_([a-z]+)\-?[a-z0-9]*_v0[1-9]_m(.*)"', 2)	
 			/*vermast:*/ lstrfun vermast_f, regexms(`"`folder'"', `"(^.*)_v(0[1-9])_m(.*)"', 2)	
 			/*veralt :*/ lstrfun veralt_f,  regexms(`"`folder'"', `"(^.*)m_v(0[1-9])_a(.*)"', 2)	
-			/*type   :*/ lstrfun type_f,    regexms(`"`folder'"', `"(^.*)_([a-z]+)([\-]?[0-9]?[1-9]?)$"', 2)	
-			/*project:*/ lstrfun project_f, regexms(`"`folder'"', `"(^.*)[_\-]([0-9]+$)"', 2)	
-			
+			/*type   :*/ /*lstrfun type_f,    regexms(`"`folder'"', `"(^.*)_([a-z]+)([\-]?[0-9]?[1-9]?)$"', 2)*/
+			/*type   :*/ lstrfun type_f,    regexms(`"`folder'"', `"(^.*)_([a-z]+)([\_]?[0-9]?[1-9]?)$"', 2)			
+			/*project:*/ lstrfun project_f, regexms(`"`folder'"', `"(^.*)[_\-]([0-9]+$)(_all)"', 2)	
+			/*period:*/ lstrfun period_f, regexms(`"`folder'"', `"(^.*)[_\-](q0[0-9])_(.*)"', 2)
 			
 			noi post `a' ("`folder'") ("`country_f'") ("`years_f'") ("`survey_f'") ///
-			("`vermast_f'") ("`veralt_f'") ("`type_f'") ("`project_f'")
+			("`vermast_f'") ("`veralt_f'") ("`type_f'") ("`project_f'") ("`period_f'")
 		}
-		
+
+
 		postclose `a'
 		drop _all
 		use `aux'
@@ -551,7 +553,6 @@ program define datalib_lablac, rclass
 					* Merge with cpi data
 					cap drop _merge
 					sort pais ano encuesta trimestre
-					 
 					merge pais ano encuesta trimestre  using "`root'/ipc_lablac_wb", keep(`cpippp' conversion)
 					
 					count if _merge==3
