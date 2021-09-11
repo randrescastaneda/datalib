@@ -16,9 +16,8 @@ program define datalib2drives
 syntax anything(name=drives), [ados files domerge dta]
 
 local source       "C:\ado\personal\d"
-local dests        "\\Gpvdrlac\datalib\Datalib"      // Interno
-local destu        "\\Gpvdrlac\datalibpub\Datalib"  // Public nuevo
-* local destu      "\\lcrms02\datalibpub\Datalib"    // Public viejo
+local dests        ""      // Interno
+local destu        ""  // Public nuevo
 local sourcef      "C:\ado\personal\Datalib-dofiles_sedlac"
 
 
